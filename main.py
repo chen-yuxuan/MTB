@@ -1,8 +1,11 @@
+from torch.utils.data import DataLoader
+
 import logging
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
 from mtb.data import TACREDDataset
+from mtb.processors import BERTProcessor
 from mtb.utils import resolve_relative_path
 
 
@@ -20,10 +23,19 @@ def main(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
 
     train_dataset = TACREDDataset(cfg.train_file)
-    valid_dataset = TACREDDataset(cfg.val_file)
-    test_dataset = TACREDDataset(cfg.test_file)
+    val_dataset = TACREDDataset(cfg.val_file)
 
-    processor = 0
+    if cfg.variant in ["d", "e", "f"]:
+        entity_marker = True
+    processor = BERTProcessor(
+        tokenizer_name_or_path=cfg.model,
+        entity_marker=entity_marker,
+        max_length=cfg.max_length,
+    )
+
+    train_dataset, val_dataset = map(
+        processor, (train_dataset, val_dataset)
+    )
 
 
 if __name__ == "__main__":

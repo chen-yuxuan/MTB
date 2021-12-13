@@ -8,9 +8,7 @@ test_file: "./data/tacred/test.json"
 model: bert-large-cased
 variant: a
 
+max_length: 256
 batch_size: 64
 lr: 3.e-5
 num_epochs: 5
-
-defaults:
-  - dataset: tacred

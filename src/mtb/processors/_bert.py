@@ -10,10 +10,11 @@ class BERTProcessor(DatasetProcessor):
     """Provide processing methods that are executed between fetching batch from
     a `torch.utils.data.Dataset` and feeding this batch to a language model.
     """
+
     def __init__(
         self,
         tokenizer_name_or_path: str = "bert-base-cased",
-        entity_marker: str = "True",
+        entity_marker: bool = True,
         text_column_name: str = "token",
         label_column_name: str = "relation_id",
         max_length: int = 256,
@@ -32,4 +33,3 @@ class BERTProcessor(DatasetProcessor):
         if self.entity_marker:
             dataset = dataset.map(self.insert_entity_marker)
         return dataset
-

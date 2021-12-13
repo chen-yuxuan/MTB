@@ -7,13 +7,11 @@ from typing import Union, List, Dict
 class REDataset(torch.utils.data.Dataset):
     """A general relation extraction (RE) dataset from the raw dataset."""
 
-    def __init__(
-        self,
-        data_file: str,
-        label_column_name: str = "relation"
-    ):
+    def __init__(self, data_file: str, label_column_name: str = "relation"):
         super().__init__()
-        self.dataset = datasets.load_dataset("json", data_files=data_file, split="train")
+        self.dataset = datasets.load_dataset(
+            "json", data_files=data_file, split="train"
+        )
         self.label_column_name = label_column_name
 
     def __getitem__(self, index: Union[int, List[int], torch.Tensor]):
