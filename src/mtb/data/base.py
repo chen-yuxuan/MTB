@@ -1,7 +1,8 @@
+from typing import Union, List, Dict
+
 import torch
 import datasets
 
-from typing import Union, List, Dict
 
 
 class REDataset(torch.utils.data.Dataset):

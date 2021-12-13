@@ -1,7 +1,7 @@
+from typing import Union, Dict, Any
+
 import torch
 import datasets
-
-from typing import Union, Dict, Any
 
 
 class DatasetProcessor:

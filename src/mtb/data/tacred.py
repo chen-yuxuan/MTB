@@ -1,8 +1,8 @@
-import torch
-import datasets
-
 from logging import getLogger
 from typing import List
+
+import torch
+import datasets
 
 from .base import REDataset
 

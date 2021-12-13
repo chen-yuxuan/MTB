@@ -1,6 +1,6 @@
-from torch.utils.data import DataLoader
-
 import logging
+
+from torch.utils.data import DataLoader
 import hydra
 from omegaconf import DictConfig, OmegaConf
 

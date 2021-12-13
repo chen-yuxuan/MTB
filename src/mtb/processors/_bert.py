@@ -1,7 +1,7 @@
+from typing import Dict, List, Union
+
 from transformers import AutoTokenizer
 import datasets
-
-from typing import Dict, List, Union
 
 from .base import DatasetProcessor
 
