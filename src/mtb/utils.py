@@ -1,10 +1,10 @@
+import torch
+
+import numpy as np
 import random
 from typing import Dict, Any
 from omegaconf import DictConfig
 from hydra.utils import to_absolute_path
-
-import numpy
-import torch
 
 
 # names of hyper-parameters
@@ -25,7 +25,7 @@ def seed_everything(seed: int) -> None:
     `random`, `numpy` and `torch`.
     """
     random.seed(seed)
-    numpy.random.seed(seed)
+    np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
@@ -53,6 +53,6 @@ def read_hyperparams_from_cfg(cfg: DictConfig) -> Dict[str, Any]:
     Args:
         cfg: Configuration of the experiment given in a dict.
     Returns:
-        A dictionary containing the hyperparameters fron `cfg`.
+        A dictionary containing the hyperparameters from `cfg`.
     """
     return {param_name: cfg[param_name] for param_name in _HYPERPARAM_NAMES}
