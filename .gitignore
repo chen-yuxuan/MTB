@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # data files
-data/
+/data/
 
 # IDE configs
 .idea/
