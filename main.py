@@ -1,11 +1,15 @@
 import logging
 
 from torch.utils.data import DataLoader
+from torch import nn
+from torch.optim import Adam
+from transformers import AutoTokenizer
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
 from mtb.data import TACREDDataset
-from mtb.processors import BERTProcessor
+from mtb.models import BERTModel
+from mtb.processor import BERTProcessor
 from mtb.utils import resolve_relative_path
 
 
@@ -22,20 +26,35 @@ def main(cfg: DictConfig) -> None:
     resolve_relative_path(cfg)
     print(OmegaConf.to_yaml(cfg))
 
-    train_dataset = TACREDDataset(cfg.train_file)
-    val_dataset = TACREDDataset(cfg.val_file)
-
+    # prepare dataset: parse raw dataset and do some simple pre-processing such as
+    # convert special tokens and insert entity markerss
     if cfg.variant in ["d", "e", "f"]:
         entity_marker = True
-    processor = BERTProcessor(
-        tokenizer_name_or_path=cfg.model,
-        entity_marker=entity_marker,
-        max_length=cfg.max_length,
+    train_dataset = TACREDDataset(cfg.train_file, entity_marker=entity_marker)
+    val_dataset = TACREDDataset(cfg.val_file, entity_marker=entity_marker)
+
+    # set dataloader
+    train_dataloader = DataLoader(
+        train_dataset, batch_size=cfg.batch_size, shuffle=True, pin_memory=True
+    )
+    val_dataloader = DataLoader(
+        val_dataset, batch_size=cfg.batch_size, shuffle=False, pin_memory=True
     )
 
-    train_dataset, val_dataset = map(
-        processor, (train_dataset, val_dataset)
+    # set processer which tokenizes and aligns all the tokens in a batch
+    processer = BERTProcessor(
+        tokenizer_name_or_path=cfg.model, entity_marker=entity_marker
     )
+
+    # build model
+    model = None
+
+    # set loss function and optimizer
+    # criterion = nn.CrossEntropyLoss()
+    # optimizer = Adam(params=model.parameters(), lr=cfg.lr)
+
+    # start the training
+    trainer(model, train_dataloader, val_dataloader, lr=cfg.lr)
 
 
 if __name__ == "__main__":
