@@ -134,4 +134,4 @@ dmypy.json
 # IDE configs
 .idea/
 
-*.ipynb
+/*.ipynb

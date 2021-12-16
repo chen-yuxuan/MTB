@@ -34,8 +34,10 @@ def resolve_relative_path(cfg: DictConfig) -> None:
     """Resolves all the relative path(s) given in `config.dataset` into absolute path(s).
     This function makes our code runnable in docker as well, where using relative path has
     problem with locating dataset files in `src/../datasets`.
+
     Args:
         cfg: Configuration of the experiment given in a dict.
+
     Example:
         Given `cfg.dataset.root="./datasets` and we call from
         "/netscratch/user/code/mtb/main.py", then `cfg.dataset.root` is
@@ -50,8 +52,10 @@ def resolve_relative_path(cfg: DictConfig) -> None:
 
 def read_hyperparams_from_cfg(cfg: DictConfig) -> Dict[str, Any]:
     """Read hyperparameters from configuration.
+
     Args:
         cfg: Configuration of the experiment given in a dict.
+
     Returns:
         A dictionary containing the hyperparameters from `cfg`.
     """

@@ -1,5 +1,6 @@
 import logging
 
+import torch
 from torch.utils.data import DataLoader
 from torch import nn
 from torch.optim import Adam
@@ -8,8 +9,8 @@ import hydra
 from omegaconf import DictConfig, OmegaConf
 
 from mtb.data import TACREDDataset
-from mtb.models import BERTModel
-from mtb.processor import BERTProcessor
+from mtb.model import BERTModel
+from mtb.tokenizer import BERTProcessor
 from mtb.utils import resolve_relative_path
 
 
@@ -27,9 +28,8 @@ def main(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
 
     # prepare dataset: parse raw dataset and do some simple pre-processing such as
-    # convert special tokens and insert entity markerss
-    if cfg.variant in ["d", "e", "f"]:
-        entity_marker = True
+    # convert special tokens and insert entity markers
+    entity_marker = True if cfg.variant in ["d", "e", "f"] else False
     train_dataset = TACREDDataset(cfg.train_file, entity_marker=entity_marker)
     val_dataset = TACREDDataset(cfg.val_file, entity_marker=entity_marker)
 
@@ -41,9 +41,11 @@ def main(cfg: DictConfig) -> None:
         val_dataset, batch_size=cfg.batch_size, shuffle=False, pin_memory=True
     )
 
-    # set processer which tokenizes and aligns all the tokens in a batch
-    processer = BERTProcessor(
-        tokenizer_name_or_path=cfg.model, entity_marker=entity_marker
+    # processor tokenizes and aligns all the tokens in a batch
+    processor = BERTProcessor(
+        tokenizer_name_or_path=cfg.model,
+        entity_marker=entity_marker,
+        max_length=cfg.max_length,
     )
 
     # build model

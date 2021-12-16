@@ -7,7 +7,7 @@ val_file: "./data/tacred/dev.json"
 model: bert-large-cased
 variant: a
 
-max_length: 256
+max_length: 128
 batch_size: 64
 lr: 3.e-5
 num_epochs: 5
