@@ -1,4 +1,4 @@
-from .bert import BERTModel
+from .base import MTBModel
 
 
-__all__ = ["BERTModel"]
+__all__ = ["MTBModel"]

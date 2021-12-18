@@ -18,16 +18,16 @@ class BatchTokenizer:
     def __init__(
         self,
         tokenizer_name_or_path: str = "bert-base-cased",
-        entity_marker: bool = True,
+        variant: str = "f",
         text_column_name: str = "token",
         max_length: int = 128,
     ):
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name_or_path)
-        self.entity_marker = entity_marker
+        self.variant = variant
         self.text_column_name = text_column_name
         self.max_length = max_length
 
-        if self.entity_marker:
+        if self.variant in ["d", "e", "f"]:
             self.tokenizer.add_special_tokens(
                 {"additional_special_tokens": ["<e1>", "</e1>", "<e2>", "</e2>"]}
             )
@@ -43,6 +43,10 @@ class BatchTokenizer:
             return_tensors="pt",
             return_offsets_mapping=True,
         )
+
+        if self.variant in ["a", "d"]:
+            # no position to return because only the [CLS] embedding is considered
+            return tokenized, None
 
         # update starts and ends for each example within a batch
         subj_starts, subj_ends, obj_starts, obj_ends = [], [], [], []
@@ -75,4 +79,13 @@ class BatchTokenizer:
                         obj_ends.append(idx)
                 count += 1
 
-        return tokenized, subj_starts, subj_ends, obj_starts, obj_ends
+        if self.variant == "f":
+            return tokenized, (subj_starts, obj_starts)
+
+        if self.variant == "e":
+            subj_starts = [start + 1 for start in subj_starts]
+            obj_starts = [start + 1 for start in obj_starts]
+            subj_ends = [end - 1 for end in subj_ends]
+            obj_ends = [end - 1 for end in obj_ends]
+        # in case of variant being "b", "c", "e"
+        return tokenized, (subj_starts, subj_ends, obj_starts, obj_ends)

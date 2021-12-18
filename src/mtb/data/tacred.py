@@ -28,6 +28,8 @@ _SPECIAL_TOKENS_DICT = {
 
 
 class TACREDDataset(REDataset):
+    """The TACRED dataset from the raw data file(s)."""
+
     def __init__(
         self,
         data_file: str,
@@ -35,6 +37,15 @@ class TACREDDataset(REDataset):
         text_column_name: str = "token",
         label_column_name: str = "relation",
     ):
+        """
+        Args:
+            data_file: Path to the .json file for the split of data.
+            entity_marker: A boolean to indicate whether or not to insert entity markers ("<e1>",
+            "</e1>", "<e2>", "</e2>") to the original text. The `True` case corresponds to variants
+            "a", "b" and "c".
+            text_colomn_name: The name of the column for the text. "token" for TACRED here.
+            label_column_name: The name of the column for the label. "relation" for TACRED here.
+        """
         super().__init__(data_file, entity_marker, text_column_name, label_column_name)
         self.dataset = self.dataset.remove_columns(_COLUMNS_TO_REMOVE)
         self.add_column_for_label_id(new_column_name="relation_id")

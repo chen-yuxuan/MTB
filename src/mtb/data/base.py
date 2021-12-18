@@ -14,6 +14,15 @@ class REDataset(torch.utils.data.Dataset):
         text_column_name: str = "token",
         label_column_name: str = "relation",
     ):
+        """
+        Args:
+            data_file: Path to the .json file for the split of data.
+            entity_marker: A boolean to indicate whether or not to insert entity markers ("<e1>",
+            "</e1>", "<e2>", "</e2>") to the original text. The `True` case corresponds to variants
+            "a", "b" and "c".
+            text_colomn_name: The name of the column for the text, e.g. "token" for TACRED.
+            label_column_name: The name of the column for the label, e.g. "relation" for TACRED.
+        """
         super().__init__()
         self.dataset = datasets.load_dataset(
             "json", data_files=data_file, split="train"
