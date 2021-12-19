@@ -1,5 +1,6 @@
 from logging import getLogger
-from typing import Dict, Any, Optional
+from multiprocessing import pool
+from typing import List, Dict, Any, Optional
 
 import torch
 from torch import nn
@@ -13,7 +14,7 @@ class MTBModel(nn.Module):
     def __init__(
         self,
         model_name_or_path: str = "bert-base-cased",
-        variant: str = "a",
+        variant: str = "b",
         vocab_size: int = 29000,
         num_classes: int = 42,
         dropout: float = 0.1,
@@ -45,53 +46,93 @@ class MTBModel(nn.Module):
         if self.variant in ["a", "d"]:
             out = self.fetch_feature_a_or_d(out)
         elif self.variant in ["b", "e"]:
-            out = self.fetch_feature_b_or_e(out)
+            out = self.fetch_feature_b_or_e(out, cues)
         elif self.variant == "f":
-            out = self.fetch_feature_f(out)
+            out = self.fetch_feature_f(out, cues)
 
-        logger.warning(out.shape)
         out = self.fc(out)
         return out
 
-    def fetch_feature_a_or_d(self, embedding: torch.Tensor) -> torch.Tensor:
+    def fetch_feature_a_or_d(self, embeddings: torch.Tensor) -> torch.Tensor:
         """Fetch feature for variant 'a' or 'd', i.e. gather the embeddings
         at [CLS] positions.
 
         Args:
-            embedding: The text embedding of shape `[batch_size, max_seq_len_per_batch,
+            embeddings: The text embeddings of shape `[batch_size, max_seq_len_per_batch,
             hidden_size]`.
 
         Returns:
-            The [CLS] embedding, of shape `[batch_size, hidden_size]
+            The [CLS] embedding, of shape `[batch_size, hidden_size]`.
         """
-        return torch.squeeze(embedding[:, 0, :], dim=1)
+        return torch.squeeze(embeddings[:, 0, :], dim=1)
 
     def fetch_feature_b_or_e(
-        self, embedding: torch.Tensor, cues: torch.Tensor
+        self, embeddings: torch.Tensor, cues: torch.Tensor
     ) -> torch.Tensor:
         """Fetch feature for variant 'a' or 'd', i.e. gather the embeddings at
-        [CLS] positions.
+        entity spans, perform max-pooling respectively, and concatenate them.
 
         Args:
-            embedding: The text embedding of shape `[batch_size, max_seq_len_per_batch,
+            embeddings: The text embeddings of shape `[batch_size, max_seq_len_per_batch,
             hidden_size]`.
+            cues: The start and end positions of both e1 and e2, of shape `[4, batch_size]`.
 
         Returns:
-
+            The concatenation of the two max-pooled embeddings, of shape `[batch_size,
+            2 * hidden_size].
         """
-
-        return
+        start_e1, end_e1, start_e2, end_e2 = cues
+        embedding_e1 = self.get_pooled_embedding(embeddings, start_e1, end_e1)
+        embedding_e2 = self.get_pooled_embedding(embeddings, start_e2, end_e2)
+        return torch.cat((embedding_e1, embedding_e2), dim=1)
 
     def fetch_feature_f(
-        self, embedding: torch.Tensor, cues: torch.Tensor
+        self, embeddings: torch.Tensor, cues: torch.Tensor
     ) -> torch.Tensor:
         """Fetch feature for variant 'f', i.e. gather the embeddings at entity-start cues.
-        The `cues` are of shape `[2, batch_size]`.
-        """
-        start_e1, start_e2 = cues
-        cues = cues.expand((cues.shape[0], 2, self.hidden_size))
 
-        out = torch.gather(embedding, 1, cues)
-        out = torch.reshape(out, (out.shape[0], -1))
-        out = self.fc(out)
-        return
+        Args:
+            embeddings: Of shape `[batch_size, max_seq_len_per_batch, hidden_size]`.
+            cues: the starts of e1 and e2, of shape `[2, batch_size]`.
+
+        Returns:
+            The concatenation of the two start embeddings, of shape `[batch_size, 2 * hidden_size].
+        """
+        # both two vectors have shape `[batch_size, ]`
+        start_e1, start_e2 = cues
+
+        # get the embedding of two entity starts, each of shape `[batch_size, hidden_size]`
+        embedding_e1 = embeddings[torch.arange(len(embeddings)), start_e1]
+        embedding_e2 = embeddings[torch.arange(len(embeddings)), start_e2]
+        return torch.cat((embedding_e1, embedding_e2), dim=1)
+
+    @staticmethod
+    def get_pooled_embedding(
+        embeddings: torch.Tensor,
+        starts: torch.Tensor,
+        ends: torch.Tensor,
+    ) -> torch.Tensor:
+        """Given the embedding of the whole text, fetch the spans of one entity and apply max-
+        pooling method to get a fix-sized representation w.r.t. that entity.
+
+        Args:
+            embeddings: The text embeddings of shape `[batch_size, max_seq_len_per_batch,
+            hidden_size]`.
+            starts: The start of the entity, of shape `[batch_size, ]`.
+            ends: The end of the entity, of shape `[batch_size, ]`.
+
+        Returns:
+            The concatenation of the two max-pooled embeddings, of shape `[batch_size,
+            2 * hidden_size].
+        """
+        features: List[torch.Tensor] = []
+        for embedding, start, end in zip(embeddings, starts, ends):
+            pooled_embedding = torch.max(
+                embedding[
+                    start : (end + 1),
+                ],
+                dim=0,
+                keepdim=True,
+            ).values
+            features.append(pooled_embedding)
+        return torch.cat(features)
