@@ -1,6 +1,6 @@
 from typing import List, Callable
 from logging import getLogger
-from tqdm import tqdm, trange
+from tqdm import tqdm
 
 import torch
 from torch import nn
@@ -11,9 +11,10 @@ from sklearn.metrics import f1_score, classification_report
 logger = getLogger(__name__)
 
 
-def train(
+def train_and_eval(
     model: nn.Module,
     train_loader: torch.utils.data.DataLoader,
+    eval_loader: torch.utils.data.DataLoader,
     label_names: List[str],
     batch_processor: Callable,
     num_epochs: int = 5,
@@ -25,77 +26,59 @@ def train(
     optimizer = Adam(params=model.parameters(), lr=lr)
     model.to(device)
 
-    for epoch in trange(num_epochs):
-        model.train()
-        loss_epoch, labels_list, preds_list = 0, [], []
-        for batch in tqdm(train_loader, leave=False):
-            tokenized, cues = batch_processor(batch)
-            tokenized.pop("offset_mapping")
-            tokenized = {k: v.to(device) for k, v in tokenized.items()}
-            labels = torch.tensor(batch["relation_id"], device=device)
+    with tqdm(total=num_epochs * len(train_loader)) as pbar:
+        for epoch in range(num_epochs):
 
-            outputs = model(x=tokenized, cues=cues)
-            loss = criterion(outputs, labels)
-            loss_epoch += loss.item()
+            model.train()
+            loss_epoch, labels_list, preds_list = 0, [], []
+            for batch in train_loader:
+                tokenized, cues = batch_processor(batch)
+                tokenized.pop("offset_mapping")
+                tokenized = {k: v.to(device) for k, v in tokenized.items()}
+                labels = torch.tensor(batch["relation_id"], device=device)
 
-            preds = torch.argmax(outputs, dim=1).detach().cpu().numpy().tolist()
-            preds_list.extend(preds)
-            labels_list.extend(batch["relation_id"])
+                outputs = model(x=tokenized, cues=cues)
+                loss = criterion(outputs, labels)
+                loss_epoch += loss.item()
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                pbar.update(1)
 
-        train_f1 = f1_score(
-            labels_list,
-            preds_list,
-            labels=range(1, len(label_names)),
-            average="micro",
-        )
-        logger.info(
-            "Epoch [{}/{}], Training Loss: {:.4f}, Training F1: {:.4f}.".format(
-                epoch + 1, num_epochs, loss_epoch, train_f1
+            logger.info(
+                "Epoch [{}/{}], Training Loss: {:.4f}.".format(
+                    epoch + 1, num_epochs, loss_epoch
+                )
             )
-        )
-    return train_f1
 
+            with torch.no_grad():
+                model.eval()
+                labels_list, preds_list = [], []
+                for batch in tqdm(eval_loader):
+                    tokenized, cues = batch_processor(batch)
+                    tokenized.pop("offset_mapping")
+                    tokenized = {k: v.to(device) for k, v in tokenized.items()}
 
-def eval(
-    model: nn.Module,
-    eval_loader: torch.utils.data.DataLoader,
-    label_names: List[str],
-    batch_processor: Callable,
-    device: torch.device = torch.device("cpu"),
-) -> None:
-    model.to(device)
-    with torch.no_grad():
-        model.eval()
-        labels_list, preds_list = [], []
-        for batch in tqdm(eval_loader):
-            tokenized, cues = batch_processor(batch)
-            tokenized.pop("offset_mapping")
-            tokenized = {k: v.to(device) for k, v in tokenized.items()}
-            cues.to(device)
+                    outputs = model(x=tokenized, cues=cues)
+                    preds = torch.argmax(outputs, dim=1).detach().cpu().numpy().tolist()
+                    preds_list.extend(preds)
+                    labels_list.extend(batch["relation_id"])
 
-            outputs = model(x=tokenized, cues=cues)
-            preds = torch.argmax(outputs, dim=1).detach().cpu().numpy().tolist()
-            preds_list.extend(preds)
-            labels_list.extend(batch["relation_id"])
+            eval_f1 = f1_score(
+                labels_list,
+                preds_list,
+                labels=range(1, len(label_names)),
+                average="micro",
+            )
 
-    eval_f1 = f1_score(
-        labels_list,
-        preds_list,
-        labels=range(1, len(label_names)),
-        average="micro",
-    )
-
-    cls_report = classification_report(
-        labels_list,
-        preds_list,
-        labels=range(0, len(label_names)),
-        target_names=label_names,
-    )
-    with open("classification_report.txt", "a") as f:
-        f.write(cls_report)
+            cls_report = classification_report(
+                labels_list,
+                preds_list,
+                labels=range(0, len(label_names)),
+                target_names=label_names,
+            )
+            with open("classification_report.txt", "a") as f:
+                f.write(cls_report)
 
     return eval_f1

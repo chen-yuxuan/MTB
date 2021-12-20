@@ -8,7 +8,7 @@ from omegaconf import DictConfig, OmegaConf
 from mtb.data import TACREDDataset
 from mtb.model import MTBModel
 from mtb.processor import BatchTokenizer, aggregate_batch
-from mtb.train_eval import train, eval
+from mtb.train_eval import train_and_eval
 from mtb.utils import resolve_relative_path, seed_everything
 
 
@@ -35,10 +35,18 @@ def main(cfg: DictConfig) -> None:
 
     # set dataloader
     train_loader = DataLoader(
-        train_dataset, batch_size=cfg.batch_size, shuffle=True, pin_memory=True, collate_fn=aggregate_batch
+        train_dataset,
+        batch_size=cfg.batch_size,
+        shuffle=True,
+        pin_memory=True,
+        collate_fn=aggregate_batch,
     )
     eval_loader = DataLoader(
-        eval_dataset, batch_size=cfg.batch_size, shuffle=False, pin_memory=True, collate_fn=aggregate_batch
+        eval_dataset,
+        batch_size=cfg.batch_size,
+        shuffle=False,
+        pin_memory=True,
+        collate_fn=aggregate_batch,
     )
 
     # set a processor that tokenizes and aligns all the tokens in a batch
@@ -63,17 +71,17 @@ def main(cfg: DictConfig) -> None:
         else torch.device("cpu")
     )
 
-    train(
+    eval_result = train_and_eval(
         model,
         train_loader,
+        eval_loader,
         label_names,
         batch_processor,
         num_epochs=cfg.num_epochs,
         lr=cfg.lr,
         device=device,
     )
-    result = eval(model, eval_loader, label_names, batch_processor, device)
-    logger.info("Result F1: {:.4f}".format(result))
+    logger.info("Result F1: {:.4f}".format(eval_result))
 
 
 if __name__ == "__main__":

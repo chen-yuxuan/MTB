@@ -1,5 +1,5 @@
 seed: 1234
-cuda_device: -1
+cuda_device: 0
 
 train_file: "./data/tacred/sample.json"
 eval_file: "./data/tacred/sample.json"

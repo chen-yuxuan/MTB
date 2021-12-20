@@ -32,7 +32,7 @@ class BatchTokenizer:
                 {"additional_special_tokens": ["<e1>", "</e1>", "<e2>", "</e2>"]}
             )
 
-    def __call__(self, batch: Dict[str, Any]) -> Dict[str, Any]:
+    def __call__(self, batch: Dict[str, Any]):
         """Call the tokenizer to tokenize the text and align the cue."""
         tokenized = self.tokenizer(
             batch[self.text_column_name],
@@ -66,7 +66,7 @@ class BatchTokenizer:
                 if offset[0] != 0 or offset[1] == 0:
                     continue
 
-                elif count in [subj_start, subj_end]:
+                if count in [subj_start, subj_end]:
                     if count == subj_start:
                         subj_starts.append(idx)
                     if count == subj_end:
@@ -78,6 +78,11 @@ class BatchTokenizer:
                     if count == obj_end:
                         obj_ends.append(idx)
                 count += 1
+
+        if not len(subj_starts) == len(subj_ends) == len(obj_starts) == len(subj_ends):
+            raise ValueError(
+                len(subj_starts), len(subj_ends), len(obj_starts), len(obj_ends)
+            )
 
         if self.variant == "f":
             return tokenized, (subj_starts, obj_starts)
