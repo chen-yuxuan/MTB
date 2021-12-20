@@ -1,6 +1,6 @@
 from logging import getLogger
 
-from .base import REDataset
+from .base import RelationExtractionDataset
 
 
 logger = getLogger(__name__)
@@ -27,7 +27,7 @@ _SPECIAL_TOKENS_DICT = {
 }
 
 
-class TACREDDataset(REDataset):
+class TACREDDataset(RelationExtractionDataset):
     """The TACRED dataset from the raw data file(s)."""
 
     def __init__(

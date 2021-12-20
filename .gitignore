@@ -134,4 +134,9 @@ dmypy.json
 # IDE configs
 .idea/
 
+# demo
 /*.ipynb
+
+# hydra
+/outputs
+/multirun

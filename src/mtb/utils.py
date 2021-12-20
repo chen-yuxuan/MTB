@@ -43,11 +43,8 @@ def resolve_relative_path(cfg: DictConfig) -> None:
         "/netscratch/user/code/mtb/main.py", then `cfg.dataset.root` is
         overwritten by `/netscratch/user/code/mbt/datasets`.
     """
-    for config_column_name in ["root", "data_files"]:
-        if config_column_name in cfg.dataset:
-            cfg.dataset[config_column_name] = to_absolute_path(
-                cfg.dataset[config_column_name]
-            )
+    for file_path in ["train_file", "eval_file"]:
+        cfg[file_path] = to_absolute_path(cfg[file_path])
 
 
 def read_hyperparams_from_cfg(cfg: DictConfig) -> Dict[str, Any]:

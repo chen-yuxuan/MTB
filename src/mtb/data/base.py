@@ -4,7 +4,7 @@ import torch
 import datasets
 
 
-class REDataset(torch.utils.data.Dataset):
+class RelationExtractionDataset(torch.utils.data.Dataset):
     """A general relation extraction (RE) dataset from the raw dataset."""
 
     def __init__(
@@ -31,6 +31,7 @@ class REDataset(torch.utils.data.Dataset):
         self.text_column_name = text_column_name
         self.label_column_name = label_column_name
         self.label_to_id = self.get_label_to_id()
+        self.id_to_label = {v: k for k, v in self.label_to_id.items()}
 
     def __getitem__(self, index: Union[int, List[int], torch.Tensor]):
         if torch.is_tensor(index):

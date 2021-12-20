@@ -1,6 +1,6 @@
 from logging import getLogger
 from multiprocessing import pool
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Tuple, Optional
 
 import torch
 from torch import nn
@@ -13,7 +13,7 @@ logger = getLogger(__name__)
 class MTBModel(nn.Module):
     def __init__(
         self,
-        model_name_or_path: str = "bert-base-cased",
+        encoder_name_or_path: str = "bert-base-cased",
         variant: str = "b",
         vocab_size: int = 29000,
         num_classes: int = 42,
@@ -23,7 +23,7 @@ class MTBModel(nn.Module):
         self.variant = variant
         self.vocab_size = vocab_size
 
-        self.encoder = AutoModel.from_pretrained(model_name_or_path)
+        self.encoder = AutoModel.from_pretrained(encoder_name_or_path)
         self.encoder.resize_token_embeddings(self.vocab_size)
 
         self.hidden_size = self.encoder.config.hidden_size
@@ -37,7 +37,7 @@ class MTBModel(nn.Module):
         )
 
     def forward(
-        self, x: Dict[str, Any], cues: Optional[torch.Tensor] = None
+        self, x: Dict[str, Any], cues: Optional[Tuple[torch.Tensor]] = None
     ) -> torch.Tensor:
         # shape: [batch_size, max_seq_len_per_batch, hidden_size]
         # (in this case, hidden_size is 768 for bert)
@@ -67,7 +67,7 @@ class MTBModel(nn.Module):
         return torch.squeeze(embeddings[:, 0, :], dim=1)
 
     def fetch_feature_b_or_e(
-        self, embeddings: torch.Tensor, cues: torch.Tensor
+        self, embeddings: torch.Tensor, cues: Tuple[torch.Tensor]
     ) -> torch.Tensor:
         """Fetch feature for variant 'a' or 'd', i.e. gather the embeddings at
         entity spans, perform max-pooling respectively, and concatenate them.
@@ -87,7 +87,7 @@ class MTBModel(nn.Module):
         return torch.cat((embedding_e1, embedding_e2), dim=1)
 
     def fetch_feature_f(
-        self, embeddings: torch.Tensor, cues: torch.Tensor
+        self, embeddings: torch.Tensor, cues: Tuple[torch.Tensor]
     ) -> torch.Tensor:
         """Fetch feature for variant 'f', i.e. gather the embeddings at entity-start cues.
 

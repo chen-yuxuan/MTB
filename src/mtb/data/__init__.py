@@ -1,5 +1,5 @@
-from .base import REDataset
+from .base import RelationExtractionDataset
 from .tacred import TACREDDataset
 
 
-__all__ = ["REDataset", "TACredDataset"]
+__all__ = ["RelationExtractionDataset", "TACredDataset"]
