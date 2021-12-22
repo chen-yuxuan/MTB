@@ -71,6 +71,7 @@ def train_and_eval(
                 labels=range(1, len(label_names)),
                 average="micro",
             )
+            logger.info("Validation F1-score: {:.4f}.".format(eval_f1))
 
             cls_report = classification_report(
                 labels_list,
