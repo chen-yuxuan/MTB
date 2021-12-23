@@ -63,10 +63,10 @@ dropout: 0.1
 |Variant|Max-length|Micro F1-score (%)|
 |:-:|-:|-:|
 |a|128|23.5|
-|b|512| |
+|b|512|64.8|
 |d|128|67.7|
 |e|512|67.5|
-|f|512| |
+|f|512|67.9|
 
 - Few-shot scenario
 
