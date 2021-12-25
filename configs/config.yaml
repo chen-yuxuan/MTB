@@ -1,8 +1,8 @@
 seed: 1234
 cuda_device: 0
 
-train_file: "./data/tacred/sample.json"
-eval_file: "./data/tacred/sample.json"
+train_file: "./data/tacred/train.json"
+eval_file: "./data/tacred/dev.json"
 
 model: bert-base-cased
 variant: d
