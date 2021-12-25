@@ -1,5 +1,6 @@
 from typing import Dict, Any
 
+import torch
 from transformers import AutoTokenizer
 
 
@@ -78,7 +79,6 @@ class BatchTokenizer:
                     if count == obj_end:
                         obj_ends.append(idx)
                 count += 1
-
         if not len(subj_starts) == len(subj_ends) == len(obj_starts) == len(subj_ends):
             raise ValueError(
                 len(subj_starts), len(subj_ends), len(obj_starts), len(obj_ends)
@@ -92,5 +92,24 @@ class BatchTokenizer:
             obj_starts = [start + 1 for start in obj_starts]
             subj_ends = [end - 1 for end in subj_ends]
             obj_ends = [end - 1 for end in obj_ends]
-        # in case of variant being "b", "c", "e"
+
+        if self.variant in ["b", "e"]:
+            return tokenized, (subj_starts, subj_ends, obj_starts, obj_ends)
+
+        # in case of variant "c"
+        batch_token_type_ids = []
+        for input_ids, subj_start, subj_end, obj_start, obj_end in zip(
+            tokenized["input_ids"],
+            batch["subj_start"],
+            batch["subj_end"],
+            batch["obj_start"],
+            batch["obj_end"],
+        ):
+            token_type_ids = [0] * len(input_ids)
+            token_type_ids[subj_start : (subj_end + 1)] = [1] * (
+                subj_end + 1 - subj_start
+            )
+            token_type_ids[obj_start : (obj_end + 1)] = [2] * (obj_end + 1 - obj_start)
+            batch_token_type_ids.append(token_type_ids)
+        tokenized["token_type_ids"] = torch.LongTensor(batch_token_type_ids)
         return tokenized, (subj_starts, subj_ends, obj_starts, obj_ends)

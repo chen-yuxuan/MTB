@@ -5,7 +5,8 @@ from tqdm import tqdm
 import torch
 from torch import nn
 from torch.optim import Adam
-from sklearn.metrics import f1_score, classification_report
+import numpy as np
+from sklearn.metrics import f1_score, classification_report, confusion_matrix
 
 
 logger = getLogger(__name__)
@@ -81,5 +82,13 @@ def train_and_eval(
             )
             with open("classification_report.txt", "a") as f:
                 f.write(cls_report)
+            np.savetxt(
+                "confusion_matrix.txt",
+                confusion_matrix(
+                    labels_list, preds_list, labels=range(0, len(label_names))
+                ),
+                fmt="%i",
+                delimiter=",",
+            )
 
     return eval_f1
