@@ -28,9 +28,11 @@ class MTBModel(nn.Module):
 
         if self.variant == "c":
             self.encoder.config.type_vocab_size = 3
-            self.encoder.embeddings.token_type_embeddings = nn.Embedding(
+            token_type_embed = nn.Embedding(
                 self.encoder.config.type_vocab_size, self.encoder.config.hidden_size
             )
+            token_type_embed.weight.data.uniform_(-1, 1)
+            self.encoder.embeddings.token_type_embeddings = token_type_embed
 
         self.hidden_size = self.encoder.config.hidden_size
         self.in_features = (
