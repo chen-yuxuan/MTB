@@ -26,6 +26,14 @@ class MTBModel(nn.Module):
         self.encoder = AutoModel.from_pretrained(encoder_name_or_path)
         self.encoder.resize_token_embeddings(self.vocab_size)
 
+        if self.variant == "c":
+            self.encoder.config.type_vocab_size = 3
+            token_type_embed = nn.Embedding(
+                self.encoder.config.type_vocab_size, self.encoder.config.hidden_size
+            )
+            token_type_embed.weight.data.uniform_(-1, 1)
+            self.encoder.embeddings.token_type_embeddings = token_type_embed
+
         self.hidden_size = self.encoder.config.hidden_size
         self.in_features = (
             self.hidden_size if self.variant in ["a", "d"] else 2 * self.hidden_size
@@ -45,8 +53,8 @@ class MTBModel(nn.Module):
 
         if self.variant in ["a", "d"]:
             out = self.fetch_feature_a_or_d(out)
-        elif self.variant in ["b", "e"]:
-            out = self.fetch_feature_b_or_e(out, cues)
+        elif self.variant in ["b", "c", "e"]:
+            out = self.fetch_feature_b_or_c_or_e(out, cues)
         elif self.variant == "f":
             out = self.fetch_feature_f(out, cues)
 
@@ -66,7 +74,7 @@ class MTBModel(nn.Module):
         """
         return torch.squeeze(embeddings[:, 0, :], dim=1)
 
-    def fetch_feature_b_or_e(
+    def fetch_feature_b_or_c_or_e(
         self, embeddings: torch.Tensor, cues: Tuple[torch.Tensor]
     ) -> torch.Tensor:
         """Fetch feature for variant 'a' or 'd', i.e. gather the embeddings at
