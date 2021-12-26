@@ -57,8 +57,8 @@ dropout: 0.1
 
 
 ## Results
-### TACRED (with `bert-base-cased`)
-- Fully-supervised
+### TACRED *with `bert-base-cased`*
+- Supervised
 
 |Variant|Max-length|Micro F1-score (%)|
 |:-:|-:|-:|
