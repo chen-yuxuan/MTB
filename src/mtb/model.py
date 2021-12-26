@@ -52,16 +52,16 @@ class MTBModel(nn.Module):
         out = self.encoder(**x).last_hidden_state
 
         if self.variant in ["a", "d"]:
-            out = self.fetch_feature_a_or_d(out)
+            out = self._fetch_feature_a_or_d(out)
         elif self.variant in ["b", "c", "e"]:
-            out = self.fetch_feature_b_or_c_or_e(out, cues)
+            out = self._fetch_feature_b_or_c_or_e(out, cues)
         elif self.variant == "f":
-            out = self.fetch_feature_f(out, cues)
+            out = self._fetch_feature_f(out, cues)
 
         out = self.fc(out)
         return out
 
-    def fetch_feature_a_or_d(self, embeddings: torch.Tensor) -> torch.Tensor:
+    def _fetch_feature_a_or_d(self, embeddings: torch.Tensor) -> torch.Tensor:
         """Fetch feature for variant 'a' or 'd', i.e. gather the embeddings
         at [CLS] positions.
 
@@ -74,7 +74,7 @@ class MTBModel(nn.Module):
         """
         return torch.squeeze(embeddings[:, 0, :], dim=1)
 
-    def fetch_feature_b_or_c_or_e(
+    def _fetch_feature_b_or_c_or_e(
         self, embeddings: torch.Tensor, cues: Tuple[torch.Tensor]
     ) -> torch.Tensor:
         """Fetch feature for variant 'a' or 'd', i.e. gather the embeddings at
@@ -90,11 +90,11 @@ class MTBModel(nn.Module):
             2 * hidden_size].
         """
         start_e1, end_e1, start_e2, end_e2 = cues
-        embedding_e1 = self.get_pooled_embedding(embeddings, start_e1, end_e1)
-        embedding_e2 = self.get_pooled_embedding(embeddings, start_e2, end_e2)
+        embedding_e1 = self._get_pooled_embedding(embeddings, start_e1, end_e1)
+        embedding_e2 = self._get_pooled_embedding(embeddings, start_e2, end_e2)
         return torch.cat((embedding_e1, embedding_e2), dim=1)
 
-    def fetch_feature_f(
+    def _fetch_feature_f(
         self, embeddings: torch.Tensor, cues: Tuple[torch.Tensor]
     ) -> torch.Tensor:
         """Fetch feature for variant 'f', i.e. gather the embeddings at entity-start cues.
@@ -115,7 +115,7 @@ class MTBModel(nn.Module):
         return torch.cat((embedding_e1, embedding_e2), dim=1)
 
     @staticmethod
-    def get_pooled_embedding(
+    def _get_pooled_embedding(
         embeddings: torch.Tensor,
         starts: torch.Tensor,
         ends: torch.Tensor,

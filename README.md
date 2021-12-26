@@ -11,13 +11,12 @@ pip install -e .
 ```
 
 ## Usage
-To evaluate the default setting, run
-To run the default experiment setting (i.e. `model="bert-base-cased", variant="f", max_length=128, batch_size=64, num_epochs=5, lr=3e-5, dropout=0.1`), run:
+To evaluate the default setting (i.e. `model="bert-base-cased", variant="f", max_length=128, batch_size=64, num_epochs=5, lr=3e-5, dropout=0.1`), run:
 ```bash
 python main.py
 ```
 
-To run your own setting, for example:
+To run your own setting, for example do:
 ```bash
 python main.py variant=a model="bert-large-uncased" batch_size=32 num_epochs=10
 ```
@@ -57,8 +56,9 @@ dropout: 0.1
 
 
 
-## Results of `bert-base-cased`
-- Fully-supervised scenario
+## Results
+### TACRED (with `bert-base-cased`)
+- Fully-supervised
 
 |Variant|Max-length|Micro F1-score (%)|
 |:-:|-:|-:|
@@ -68,7 +68,11 @@ dropout: 0.1
 |e|512|67.5|
 |f|512|67.9|
 
-- Few-shot scenario
+- Few-shot
+
+### SMiLER
+
+### FewRel
 
 
 ## Citation
