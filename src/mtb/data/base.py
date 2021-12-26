@@ -4,7 +4,7 @@ import torch
 import datasets
 
 
-class RelationExtractionDataset(torch.utils.data.Dataset):
+class REDataset(torch.utils.data.Dataset):
     """A general relation extraction (RE) dataset from the raw dataset."""
 
     def __init__(
@@ -30,7 +30,7 @@ class RelationExtractionDataset(torch.utils.data.Dataset):
         self.entity_marker = entity_marker
         self.text_column_name = text_column_name
         self.label_column_name = label_column_name
-        self.label_to_id = self.get_label_to_id()
+        self.label_to_id = self._get_label_to_id()
         self.id_to_label = {v: k for k, v in self.label_to_id.items()}
 
     def __getitem__(self, index: Union[int, List[int], torch.Tensor]):
@@ -41,7 +41,7 @@ class RelationExtractionDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.dataset)
 
-    def get_label_to_id(self) -> Dict[str, int]:
+    def _get_label_to_id(self) -> Dict[str, int]:
         """Get a dict of the class-id mapping."""
         label_list = list(set(self.dataset[self.label_column_name]))
         label_list.sort()
