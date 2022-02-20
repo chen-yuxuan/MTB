@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
-from mtb.data import TACREDDataset
+from mtb.data import TACREDDataset, SemEvalDataset
 from mtb.model import MTBModel
 from mtb.processor import BatchTokenizer, aggregate_batch
 from mtb.train_eval import train_and_eval
@@ -29,9 +29,13 @@ def main(cfg: DictConfig) -> None:
     # prepare dataset: parse raw dataset and do some simple pre-processing such as
     # convert special tokens and insert entity markers
     entity_marker = True if cfg.variant in ["d", "e", "f"] else False
-    train_dataset = TACREDDataset(cfg.train_file, entity_marker=entity_marker)
-    eval_dataset = TACREDDataset(cfg.eval_file, entity_marker=entity_marker)
-    label_names = train_dataset.label_to_id.keys()
+    if "tacred" in cfg.train_file.lower():
+        train_dataset = TACREDDataset(cfg.train_file, entity_marker=entity_marker)
+        eval_dataset = TACREDDataset(cfg.eval_file, entity_marker=entity_marker)
+    elif "semeval" in cfg.train_file.lower():
+        train_dataset = SemEvalDataset(cfg.train_file, entity_marker=entity_marker)
+        eval_dataset = SemEvalDataset(cfg.eval_file, entity_marker=entity_marker)
+    label_to_id = train_dataset.label_to_id
 
     # set dataloader
     train_loader = DataLoader(
@@ -62,7 +66,7 @@ def main(cfg: DictConfig) -> None:
         encoder_name_or_path=cfg.model,
         variant=cfg.variant,
         vocab_size=vocab_size,
-        num_classes=len(label_names),
+        num_classes=len(label_to_id),
         dropout=cfg.dropout,
     )
     device = (
@@ -75,7 +79,7 @@ def main(cfg: DictConfig) -> None:
         model,
         train_loader,
         eval_loader,
-        label_names,
+        label_to_id,
         batch_processor,
         num_epochs=cfg.num_epochs,
         lr=cfg.lr,

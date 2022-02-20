@@ -1,11 +1,11 @@
 seed: 1234
 cuda_device: 0
 
-train_file: "./data/tacred/train.json"
-eval_file: "./data/tacred/dev.json"
+train_file: "./data/semeval/train.json"
+eval_file: "./data/semeval/test.json"
 
-model: bert-base-cased
-variant: d
+model: bert-large-uncased
+variant: f
 
 max_length: 128
 batch_size: 64

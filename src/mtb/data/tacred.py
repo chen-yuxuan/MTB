@@ -2,8 +2,6 @@ from logging import getLogger
 from typing import List, Dict, Any
 import random
 
-import torch
-
 from .base import REDataset
 
 
@@ -52,7 +50,6 @@ class TACREDDataset(REDataset):
         """
         super().__init__(data_file, entity_marker, text_column_name, label_column_name)
         self.dataset = self.dataset.remove_columns(_COLUMNS_TO_REMOVE)
-        self.add_column_for_label_id(new_column_name="relation_id")
 
         # convert special tokens
         self.dataset = self.dataset.map(
@@ -76,7 +73,6 @@ class TACREDFewShotDataset(TACREDDataset):
 
     The size of this dataset is `N` * `K` if the sampled classes have >= K examples.
     """
-
     def __init__(
         self,
         data_file: str,
@@ -102,7 +98,7 @@ class TACREDFewShotDataset(TACREDDataset):
             ),
         )
 
-        self.sampled_indices = self._sample_indices()       
+        self.sampled_indices = self._sample_indices()
         self.dataset = self.dataset.select(self.sampled_indices)
 
     def _get_indices_per_class(self) -> Dict[Any, List[int]]:
@@ -131,9 +127,7 @@ class TACREDFewShotDataset(TACREDDataset):
             self.class_indices.pop(class_name, None)
 
         # sample N-ways, given by a list of strings
-        sampled_classes = random.choices(
-            list(self.class_indices.keys()), k=self.nway
-        )
+        sampled_classes = random.choices(list(self.class_indices.keys()), k=self.nway)
         # sample K-shots for each sampled class
         sampled_indices: List[int] = []
         for sampled_class in sampled_classes:
@@ -141,7 +135,7 @@ class TACREDFewShotDataset(TACREDDataset):
                 self.class_indices[sampled_class], k=self.kshot
             )
         return sampled_indices
-    
+
     def __len__(self):
         """Length of the few-shot dataset, should equal `N` * `K`."""
         return len(self.dataset)

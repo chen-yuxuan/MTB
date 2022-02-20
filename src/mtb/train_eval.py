@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import Any, List, Dict, Callable
 from logging import getLogger
 from tqdm import tqdm
 
@@ -16,7 +16,7 @@ def train_and_eval(
     model: nn.Module,
     train_loader: torch.utils.data.DataLoader,
     eval_loader: torch.utils.data.DataLoader,
-    label_names: List[str],
+    label_to_id: Dict[Any, int],
     batch_processor: Callable,
     num_epochs: int = 5,
     lr: float = 3.0e-5,
@@ -66,10 +66,18 @@ def train_and_eval(
                     preds_list.extend(preds)
                     labels_list.extend(batch["relation_id"])
 
+            positive_label_names = [
+                label_name
+                for label_name in label_to_id.keys()
+                if label_name not in ["no_relation", "Other"]
+            ]
+            positive_label_ids = [
+                label_to_id[label_name] for label_name in positive_label_names
+            ]
             eval_f1 = f1_score(
                 labels_list,
                 preds_list,
-                labels=range(1, len(label_names)),
+                labels=positive_label_ids,
                 average="micro",
             )
             logger.info("Validation F1-score: {:.4f}.".format(eval_f1))
@@ -77,16 +85,14 @@ def train_and_eval(
             cls_report = classification_report(
                 labels_list,
                 preds_list,
-                labels=range(0, len(label_names)),
-                target_names=label_names,
+                labels=positive_label_ids,
+                target_names=positive_label_names,
             )
             with open("classification_report.txt", "a") as f:
                 f.write(cls_report)
             np.savetxt(
                 "confusion_matrix.txt",
-                confusion_matrix(
-                    labels_list, preds_list, labels=range(0, len(label_names))
-                ),
+                confusion_matrix(labels_list, preds_list, labels=positive_label_ids),
                 fmt="%i",
                 delimiter=",",
             )
