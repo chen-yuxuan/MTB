@@ -80,13 +80,14 @@ def train_and_eval(
                 labels=positive_label_ids,
                 average="micro",
             )
-            logger.info("Validation F1-score: {:.4f}.".format(eval_f1))
+            logger.info("Micro-F1 score of evaluation: {:.4f}.".format(eval_f1))
 
             cls_report = classification_report(
                 labels_list,
                 preds_list,
                 labels=positive_label_ids,
                 target_names=positive_label_names,
+                digits=4,
             )
             with open("classification_report.txt", "a") as f:
                 f.write(cls_report)

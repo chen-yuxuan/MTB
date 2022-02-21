@@ -32,9 +32,11 @@ def main(cfg: DictConfig) -> None:
     if "tacred" in cfg.train_file.lower():
         train_dataset = TACREDDataset(cfg.train_file, entity_marker=entity_marker)
         eval_dataset = TACREDDataset(cfg.eval_file, entity_marker=entity_marker)
+        layer_norm = False
     elif "semeval" in cfg.train_file.lower():
         train_dataset = SemEvalDataset(cfg.train_file, entity_marker=entity_marker)
         eval_dataset = SemEvalDataset(cfg.eval_file, entity_marker=entity_marker)
+        layer_norm = True
     label_to_id = train_dataset.label_to_id
 
     # set dataloader
@@ -65,6 +67,7 @@ def main(cfg: DictConfig) -> None:
     model = MTBModel(
         encoder_name_or_path=cfg.model,
         variant=cfg.variant,
+        layer_norm=layer_norm,
         vocab_size=vocab_size,
         num_classes=len(label_to_id),
         dropout=cfg.dropout,
@@ -85,7 +88,7 @@ def main(cfg: DictConfig) -> None:
         lr=cfg.lr,
         device=device,
     )
-    logger.info("Result F1: {:.4f}".format(eval_result))
+    logger.info("Evaluation F1: {:.4f}".format(eval_result))
 
 
 if __name__ == "__main__":

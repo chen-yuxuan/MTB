@@ -72,7 +72,7 @@ dropout: 0.1
 
 ### SMiLER
 
-### FewRel
+### SemEval
 
 
 ## Citation

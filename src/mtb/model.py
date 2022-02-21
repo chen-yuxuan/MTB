@@ -15,9 +15,10 @@ class MTBModel(nn.Module):
         self,
         encoder_name_or_path: str = "bert-base-cased",
         variant: str = "b",
+        layer_norm: bool = False,
         vocab_size: int = 29000,
         num_classes: int = 42,
-        dropout: float = 0.1,
+        dropout: float = 0,
     ):
         super().__init__()
         self.variant = variant
@@ -39,10 +40,17 @@ class MTBModel(nn.Module):
             self.hidden_size if self.variant in ["a", "d"] else 2 * self.hidden_size
         )
 
-        self.fc = nn.Sequential(
-            nn.Dropout(p=dropout),
-            nn.Linear(in_features=self.in_features, out_features=num_classes),
-        )
+        if layer_norm == False:
+            self.fc = nn.Sequential(
+                nn.Dropout(p=dropout),
+                nn.Linear(in_features=self.in_features, out_features=num_classes),
+            )
+        else:
+            self.fc = nn.Sequential(
+                nn.LayerNorm(self.in_features),
+                nn.Dropout(p=dropout),
+                nn.Linear(in_features=self.in_features, out_features=num_classes),
+            )
 
     def forward(
         self, x: Dict[str, Any], cues: Optional[Tuple[torch.Tensor]] = None

@@ -11,4 +11,4 @@ max_length: 128
 batch_size: 64
 lr: 3.e-5
 num_epochs: 5
-dropout: 0.1
+dropout: 0
