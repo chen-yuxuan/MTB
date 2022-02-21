@@ -21,9 +21,9 @@ To run your own setting, for example do:
 python main.py variant=a model="bert-large-uncased" batch_size=32 num_epochs=10
 ```
 
-Hydra provides a simple way to sweep the arguments for hyperparameter-finetuning. The following command will excute 3 * 2 * 1= 6 runs in a row:
+Hydra provides a simple way (multirun `-m`) to sweep the arguments for hyperparameter-finetuning. The following command will excute 3 * 2 * 1= 6 runs in a row:
 ```
-python main.py batch_size=32,64,128 variant=b,e,f max_length=512
+python main.py -m batch_size=32,64,128 variant=b,e,f max_length=512
 ```
 
 To show the available options and the default config, do:
@@ -33,11 +33,6 @@ python main.py --help
 which results in something like this:
 
 ```
-== Configuration groups ==
-Compose your configuration from those groups (group=option)
-
-
-
 == Config ==
 Override anything in the config (foo.bar=value)
 
@@ -55,10 +50,9 @@ dropout: 0.1
 ```
 
 
-
 ## Results
 ### TACRED *with `bert-base-cased`*
-- Supervised
+- Fully-supervised
 
 |Variant|Max-length|Micro F1-score (%)|
 |:-:|-:|-:|
@@ -73,7 +67,14 @@ dropout: 0.1
 ### SMiLER
 
 ### SemEval
-
+- Fully-supervised
+|Variant|Max-length|Micro F1-score (%)|
+|:-:|-:|
+|a|23.5|
+|b|64.8|
+|d|67.7|
+|e|67.5|
+|f|89.0|
 
 ## Citation
 ```
