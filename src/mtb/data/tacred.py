@@ -73,6 +73,7 @@ class TACREDFewShotDataset(TACREDDataset):
 
     The size of this dataset is `N` * `K` if the sampled classes have >= K examples.
     """
+
     def __init__(
         self,
         data_file: str,

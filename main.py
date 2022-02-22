@@ -88,7 +88,7 @@ def main(cfg: DictConfig) -> None:
         lr=cfg.lr,
         device=device,
     )
-    logger.info("Evaluation F1: {:.4f}".format(eval_result))
+    logger.info("Evaluation micro-F1: {:.4f}".format(eval_result))
 
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ class REDataset(torch.utils.data.Dataset):
         self.entity_marker = entity_marker
         self.text_column_name = text_column_name
         self.label_column_name = label_column_name
-        
+
         self.label_to_id = self._get_label_to_id()
         self.id_to_label = {v: k for k, v in self.label_to_id.items()}
         self.add_column_for_label_id(new_column_name="relation_id")

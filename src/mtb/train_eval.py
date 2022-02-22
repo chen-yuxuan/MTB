@@ -1,6 +1,7 @@
 from typing import Any, List, Dict, Callable
 from logging import getLogger
 from tqdm import tqdm
+import pickle
 
 import torch
 from torch import nn
@@ -82,6 +83,7 @@ def train_and_eval(
             )
             logger.info("Micro-F1 score of evaluation: {:.4f}.".format(eval_f1))
 
+            # save classification report
             cls_report = classification_report(
                 labels_list,
                 preds_list,
@@ -91,11 +93,19 @@ def train_and_eval(
             )
             with open("classification_report.txt", "a") as f:
                 f.write(cls_report)
+
+            # save confusion matrix
             np.savetxt(
                 "confusion_matrix.txt",
                 confusion_matrix(labels_list, preds_list, labels=positive_label_ids),
                 fmt="%i",
                 delimiter=",",
             )
+
+        # save labels and preds
+        with open("labels", "wb") as fp:
+            pickle.dump(labels_list, fp)
+        with open("preds", "wb") as fp:
+            pickle.dump(preds_list, fp)
 
     return eval_f1
