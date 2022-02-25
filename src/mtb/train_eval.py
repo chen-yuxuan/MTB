@@ -67,18 +67,20 @@ def train_and_eval(
                     preds_list.extend(preds)
                     labels_list.extend(batch["relation_id"])
 
-            positive_label_names = [
+            id_to_label = {v: k for k, v in label_to_id.items()}
+            labels_list = [id_to_label[i] for i in labels_list]
+            preds_list = [id_to_label[i] for i in preds_list]
+
+            positive_labels = [
                 label_name
                 for label_name in label_to_id.keys()
                 if label_name not in ["no_relation", "Other"]
             ]
-            positive_label_ids = [
-                label_to_id[label_name] for label_name in positive_label_names
-            ]
+
             eval_f1 = f1_score(
                 labels_list,
                 preds_list,
-                labels=positive_label_ids,
+                labels=positive_labels,
                 average="micro",
             )
             logger.info("Micro-F1 score of evaluation: {:.4f}.".format(eval_f1))
@@ -87,8 +89,7 @@ def train_and_eval(
             cls_report = classification_report(
                 labels_list,
                 preds_list,
-                labels=positive_label_ids,
-                target_names=positive_label_names,
+                labels=positive_labels,
                 digits=4,
             )
             with open("classification_report.txt", "a") as f:
@@ -97,7 +98,7 @@ def train_and_eval(
             # save confusion matrix
             np.savetxt(
                 "confusion_matrix.txt",
-                confusion_matrix(labels_list, preds_list, labels=positive_label_ids),
+                confusion_matrix(labels_list, preds_list, labels=positive_labels),
                 fmt="%i",
                 delimiter=",",
             )

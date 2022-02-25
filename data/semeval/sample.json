@@ -1,9 +1,0 @@
-{"relation": "Message-Topic(e1,e2)", "token": ["The", "most", "common", "audits", "were", "about", "waste", "and", "recycling", "."], "subj_start": 3, "subj_end": 3, "obj_start": 6, "obj_end": 6}
-{"relation": "Product-Producer(e2,e1)", "token": ["The", "company", "fabricates", "plastic", "chairs", "."], "subj_start": 1, "subj_end": 1, "obj_start": 4, "obj_end": 4}
-{"relation": "Instrument-Agency(e2,e1)", "token": ["The", "school", "master", "teaches", "the", "lesson", "with", "a", "stick", "."], "subj_start": 2, "subj_end": 2, "obj_start": 8, "obj_end": 8}
-{"relation": "Entity-Destination(e1,e2)", "token": ["The", "suspect", "dumped", "the", "dead", "body", "into", "a", "local", "reservoir", "."], "subj_start": 5, "subj_end": 5, "obj_start": 9, "obj_end": 9}
-{"relation": "Cause-Effect(e2,e1)", "token": ["Avian", "influenza", "is", "an", "infectious", "disease", "of", "birds", "caused", "by", "type", "A", "strains", "of", "the", "influenza", "virus", "."], "subj_start": 1, "subj_end": 1, "obj_start": 16, "obj_end": 16}
-{"relation": "Component-Whole(e1,e2)", "token": ["The", "ear", "of", "the", "African", "elephant", "is", "significantly", "larger", "-", "-", "measuring", "183", "cm", "by", "114", "cm", "in", "the", "bush", "elephant", "."], "subj_start": 1, "subj_end": 1, "obj_start": 5, "obj_end": 5}
-{"relation": "Product-Producer(e1,e2)", "token": ["A", "child", "is", "told", "a", "lie", "for", "several", "years", "by", "their", "parents", "before", "he", "/", "she", "realizes", "that", "a", "Santa", "Claus", "does", "not", "exist", "."], "subj_start": 5, "subj_end": 5, "obj_start": 11, "obj_end": 11}
-{"relation": "Member-Collection(e2,e1)", "token": ["Skype", ",", "a", "free", "software", ",", "allows", "a", "hookup", "of", "multiple", "computer", "users", "to", "join", "in", "an", "online", "conference", "call", "without", "incurring", "any", "telephone", "costs", "."], "subj_start": 8, "subj_end": 8, "obj_start": 12, "obj_end": 12}
-    
