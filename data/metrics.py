@@ -29,19 +29,21 @@ def compute_metrics(count_file: str) -> Dict[str, Any]:
 
     num_examples = sum(count.values())
     shannon_index_with_negative = compute_shannon_index(count, True)
-    report = {
+
+    num_negative_examples = 0
+    shannon_index_without_negative = "NA"
+    if has_negative_class:
+        num_negative_examples = max(count.values())
+        shannon_index_without_negative = compute_shannon_index(count, False)
+    
+    return {
         "dataset": dataset_name,
         "num_classes": len(count),
         "num_examples": num_examples,
+        "num_negative_examples": num_negative_examples,
         "shannon_index_with_negative": shannon_index_with_negative,
+        "shannon_index_without_negative": shannon_index_without_negative,
     }
-
-    if has_negative_class:
-        report["num_negative_examples"] = max(count.values())
-        report["shannon_index_without_negative"] = compute_shannon_index(count, False)
-    else:
-        report["num_negative_examples"] = 0
-    return report
 
 
 if __name__ == "__main__":
