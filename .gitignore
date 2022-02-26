@@ -129,8 +129,7 @@ dmypy.json
 .pyre/
 
 # data files
-/data/tacred
-/data/docred
+/data
 
 # IDE configs
 .idea/
