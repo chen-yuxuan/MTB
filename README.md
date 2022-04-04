@@ -1,5 +1,5 @@
 # MTB
-Implementation of the first part in the "Matching the Blanks" (MTB) paper.
+Implementation of the first contribution $\text{BERT}_\text{EM}$ in the "Matching the Blanks" (MTB) paper.
 
 ![MTB feature extraction](./docs/MTB.png)
 
@@ -61,20 +61,6 @@ dropout: 0.1
 |d|128|67.7|
 |e|512|67.5|
 |f|512|67.9|
-
-- Few-shot
-
-### SMiLER
-
-### SemEval
-- Fully-supervised
-|Variant|Max-length|Micro F1-score (%)|
-|:-:|-:|
-|a|23.5|
-|b|64.8|
-|d|67.7|
-|e|67.5|
-|f|89.0|
 
 ## Citation
 ```
