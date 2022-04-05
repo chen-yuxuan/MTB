@@ -1,5 +1,5 @@
 # BERT_EM for Relation Classification
-Unofficial implementation of the first contribution ($\text{BERT}_\text{EM}$) from the "MTB"-paper: [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158).
+Unofficial implementation of the first contribution (**BERT_EM**) from the "MTB"-paper: [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158).
 
 ![MTB feature extraction](./docs/MTB.png)
 
@@ -13,27 +13,27 @@ Unofficial implementation of the first contribution ($\text{BERT}_\text{EM}$) fr
 - [License](#license)
 
 ## Introduction
-Previous work in relation classification (RC) shows great efforts to extract good relation representations. Inspired by the huge success of Transformers in NLP tasks, Baldini Soares et al. observes that Transformers (such as BERT) are good relation embedders, and further studies which embedding-fetching strategy yields the best performance in the RC task. 
+Previous work in **relation classification** (RC) shows great efforts to extract good relation representations. Inspired by the huge success of Transformers in NLP tasks, *Baldini Soares et al.* observes that Transformers (such as BERT) are good relation embedders, and further studies which embeddingstrategy out of the 6 variants can yield the best performance. 
 
 This repository is for reproducing the results of **BERT_EM** from their paper: [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158).
 
-## Overview
+## 🔭&nbsp; Overview
 |**Path**|**Description**|
-|:-:|:-:|
+|---|---|
 |[configs/](./configs/)|This directory contains the Hydra config files that specify pre-defined settings.|
 |[data/](./data/)|The directory where the user should put their data files.|
 |[docs/](./docs/)|This directory contains the auxiliary files such as the figures and the license presented in README.|
 |[src/](./src/)|This directory is the package to be installed, which contains the source code of our implementation.|
 
 
-## Installation
+## 🚀&nbsp; Installation
 ```bash
 git clone git@github.com:chen-yuxuan/MTB.git
 cd MTB
 pip install -e .
 ```
 
-## Usage
+## 💡&nbsp; Usage
 To evaluate the default setting (i.e. `model="bert-large-uncased", variant="f", max_length=512, batch_size=64, num_epochs=5, lr=3e-5, dropout=0`), run:
 ```bash
 python main.py
@@ -64,7 +64,7 @@ cuda_device: 0
 train_file: ./data/tacred/train.json
 eval_file: ./data/tacred/dev.json
 model: bert-large-uncased
-variant: d
+variant: f
 max_length: 512
 batch_size: 64
 lr: 3.0e-05
@@ -72,14 +72,14 @@ num_epochs: 5
 dropout: 0
 ```
 
-## Experiments
-Here we evaluate the TACRED and the SemEval datasets. If users have access to the two dataset, then put them under the [./data](./data/) directory, such as `./data/tacred/train.json` (as well as test and dev json files).
+## 🔬&nbsp; Experiments
+Here we evaluate the **TACRED** and the **SemEval** datasets. If users have access to the two dataset, then put them under the [./data](./data/) directory, such as `./data/tacred/train.json` (as well as test and dev json files).
 ### TACRED *with* `bert-base-cased`
 |Variant|Max-length|Micro F1-score (%)|
 |:-:|-:|-:|
-|a|512|23.5|
+|a|128|23.5|
 |b|512|64.8|
-|d|512|67.7|
+|d|128|67.7|
 |e|512|67.5|
 |f|512|67.9|
 
@@ -92,7 +92,7 @@ Here we evaluate the TACRED and the SemEval datasets. If users have access to th
 |e|128|89.6|
 |f|128|89.0|
 
-## Citation
+## 📚&nbsp; Citation
 ```
 @inproceedings{baldini-soares-etal-2019-matching,
     title = "Matching the Blanks: Distributional Similarity for Relation Learning",
@@ -112,5 +112,5 @@ Here we evaluate the TACRED and the SemEval datasets. If users have access to th
 }
 ```
 
-## License
+## 📘&nbsp; License
 **BERT_EM** is released under the terms of the [MIT License](./docs/LICENSE).
