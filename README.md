@@ -1,5 +1,5 @@
 # BERT_EM for Relation Classification
-Unofficial implementation of the first contribution (**BERT_EM**) from the "MTB"-paper: [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158).
+Unofficial implementation of the first contribution (**BERT_EM**) from the "MTB"-paper: [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158). We evaluate this method as baseline in our paper *Why only Micro-$F_1$? Class Weighting of Measures for Relation Classification*.
 
 ![MTB feature extraction](./docs/MTB.png)
 
@@ -27,6 +27,7 @@ This repository is for reproducing the results of **BERT_EM** from their paper: 
 
 
 ## 🚀&nbsp; Installation
+### From source
 ```bash
 git clone git@github.com:chen-yuxuan/MTB.git
 cd MTB
@@ -44,12 +45,7 @@ To run your own setting, for example do:
 python main.py variant=a model="bert-base-cased" batch_size=32 num_epochs=10
 ```
 
-Hydra provides a simple way (multirun `-m`) to sweep the arguments for hyperparameter-finetuning. The following command will excute 3 * 2 * 1= 6 runs in a row:
-```
-python main.py -m batch_size=32,64,128 variant=b,e,f max_length=512
-```
-
-To show the available options and the default config, do:
+To show the default config, do:
 ```bash
 python main.py --help
 ```
