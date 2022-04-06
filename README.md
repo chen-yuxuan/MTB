@@ -8,7 +8,7 @@ Unofficial implementation of the first contribution (**BERT<sub>EM</sub>**) from
 - [Overview](#overview)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Experimetns](#experiments)
+- [Experiments](#experiments)
 - [Citation](#citation)
 - [License](#license)
 
