@@ -5,12 +5,12 @@ Unofficial implementation of the first contribution (**BERT<sub>EM</sub>**) from
 
 ## Table of Contents
 - [Introduction](#introduction)
-- [Overview](#overview)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Experiments](#experiments)
-- [Citation](#citation)
-- [License](#license)
+- [Overview](#-overview)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Experiments](#-experiments)
+- [Citation](#-citation)
+- [License](#-license)
 
 ## Introduction
 Previous work in **relation classification** (RC) shows great efforts to extract good relation representations. Inspired by the huge success of Transformers in NLP tasks, *Baldini Soares et al.* observes that Transformers (such as BERT) are good relation embedders, and further studies which embedding strategy out of the 6 variants can yield the best performance. 
@@ -21,9 +21,9 @@ This repository is for reproducing the results of **BERT<sub>EM</sub>** from the
 |**Path**|**Description**|
 |---|---|
 |[configs/](./configs/)|This directory contains the Hydra config files that specify pre-defined settings.|
-|[data/](./data/)|The directory where the user should put their data files.|
+|[data/](./data/)|This directory where the user should put their data files.|
 |[docs/](./docs/)|This directory contains the auxiliary files such as the figures and the license presented in README.|
-|[src/](./src/)|This directory is the package to be installed, which contains the source code of our implementation.|
+|[src/mtb/](./src/mtb/)|This directory is the package to be installed, which contains the source code of our implementation.|
 
 
 ## 🚀&nbsp; Installation
