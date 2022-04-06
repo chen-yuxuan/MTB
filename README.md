@@ -1,5 +1,5 @@
-# BERT_EM for Relation Classification
-Unofficial implementation of the first contribution (**BERT_EM**) from the "MTB"-paper: [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158). We evaluate this method as baseline in our paper *Why only Micro-$F_1$? Class Weighting of Measures for Relation Classification*.
+# BERT<sub>EM</sub> for Relation Classification
+Unofficial implementation of the first contribution (**BERT<sub>EM</sub>**) from the "MTB"-paper: [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158). We evaluate this method as baseline in our paper *Why only Micro-$F_1$? Class Weighting of Measures for Relation Classification*.
 
 ![MTB feature extraction](./docs/MTB.png)
 
@@ -13,9 +13,9 @@ Unofficial implementation of the first contribution (**BERT_EM**) from the "MTB"
 - [License](#license)
 
 ## Introduction
-Previous work in **relation classification** (RC) shows great efforts to extract good relation representations. Inspired by the huge success of Transformers in NLP tasks, *Baldini Soares et al.* observes that Transformers (such as BERT) are good relation embedders, and further studies which embeddingstrategy out of the 6 variants can yield the best performance. 
+Previous work in **relation classification** (RC) shows great efforts to extract good relation representations. Inspired by the huge success of Transformers in NLP tasks, *Baldini Soares et al.* observes that Transformers (such as BERT) are good relation embedders, and further studies which embedding strategy out of the 6 variants can yield the best performance. 
 
-This repository is for reproducing the results of **BERT_EM** from their paper: [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158).
+This repository is for reproducing the results of **BERT<sub>EM</sub>** from their paper: [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158).
 
 ## 🔭&nbsp; Overview
 |**Path**|**Description**|
@@ -109,4 +109,4 @@ Here we evaluate the **TACRED** and the **SemEval** datasets. If users have acce
 ```
 
 ## 📘&nbsp; License
-**BERT_EM** is released under the terms of the [MIT License](./docs/LICENSE).
+**BERT<sub>EM</sub>** is released under the terms of the [MIT License](./docs/LICENSE).
