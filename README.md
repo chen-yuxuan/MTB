@@ -70,16 +70,16 @@ dropout: 0
 
 ## 🔬&nbsp; Experiments
 Here we evaluate the **TACRED** and the **SemEval** datasets. If users have access to the two dataset, then put them under the [./data](./data/) directory, such as `./data/tacred/train.json` (as well as test and dev json files).
-### TACRED *with* `bert-base-cased`
+### TACRED *with* `bert-base-cased`, dropout=0.1
 |Variant|Max-length|Micro F1-score (%)|
 |:-:|-:|-:|
-|a|128|23.5|
-|b|512|64.8|
-|d|128|67.7|
-|e|512|67.5|
-|f|512|67.9|
+|a|512|18.4|
+|b|512|65.8|
+|d|512|65.5|
+|e|512|66.3|
+|f|512|65.7|
 
-### SemEval *with* `bert-large-uncased`
+### SemEval *with* `bert-large-uncased`, dropout=0
 |Variant|Max-length|Micro F1-score (%)|
 |:-:|-:|-:|
 |a|128|79.4|
