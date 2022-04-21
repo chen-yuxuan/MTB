@@ -44,6 +44,12 @@ def resolve_relative_path(cfg: DictConfig) -> None:
         overwritten by `/netscratch/user/code/mbt/datasets`.
     """
     for file_path in ["train_file", "eval_file"]:
+        # enable simple path for smiler dataset splits, e.g. "en-train" or "de-test"
+        if "-" in cfg[file_path]:
+            splitted_path = cfg[file_path].split("-")
+            cfg[file_path] = "./data/smiler/{}_corpora_{}.json".format(
+                splitted_path[0], splitted_path[1]
+            )
         cfg[file_path] = to_absolute_path(cfg[file_path])
 
 
