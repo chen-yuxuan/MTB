@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
-from mtb.data import TACREDDataset, SemEvalDataset
+from mtb.data import TACREDDataset, SemEvalDataset, SmilerDataset
 from mtb.model import MTBModel
 from mtb.processor import BatchTokenizer, aggregate_batch
 from mtb.train_eval import train_and_eval
@@ -39,7 +39,9 @@ def main(cfg: DictConfig) -> None:
         eval_dataset = SemEvalDataset(cfg.eval_file, entity_marker=entity_marker)
         layer_norm = True
     elif "smiler" in cfg.train_file.lower():
-        pass
+        train_dataset = SmilerDataset(cfg.train_file, entity_marker=entity_marker)
+        eval_dataset = SmilerDataset(cfg.eval_file, entity_marker=entity_marker)
+        layer_norm = True
     label_to_id = train_dataset.label_to_id
 
     # set dataloader

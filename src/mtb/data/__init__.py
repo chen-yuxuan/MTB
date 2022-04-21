@@ -1,6 +1,7 @@
 from .base import REDataset
 from .tacred import TACREDDataset, TACREDFewShotDataset
 from .semeval import SemEvalDataset, SemEvalFewShotDataset
+from .smiler import SmilerDataset, SmilerFewShotDataset
 
 
 __all__ = [
@@ -9,4 +10,6 @@ __all__ = [
     "TACREDFewShotDataset",
     "SemEvalDataset",
     "SemEvalFewShotDataset",
+    "SmilerDataset",
+    "SmilerFewShotDataset",
 ]
