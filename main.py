@@ -1,4 +1,5 @@
 import logging
+import json
 
 import torch
 from torch.utils.data import DataLoader
@@ -37,6 +38,8 @@ def main(cfg: DictConfig) -> None:
         train_dataset = SemEvalDataset(cfg.train_file, entity_marker=entity_marker)
         eval_dataset = SemEvalDataset(cfg.eval_file, entity_marker=entity_marker)
         layer_norm = True
+    elif "smiler" in cfg.train_file.lower():
+        pass
     label_to_id = train_dataset.label_to_id
 
     # set dataloader
@@ -78,7 +81,7 @@ def main(cfg: DictConfig) -> None:
         else torch.device("cpu")
     )
 
-    eval_result = train_and_eval(
+    micro_f1, macro_f1 = train_and_eval(
         model,
         train_loader,
         eval_loader,
@@ -88,7 +91,13 @@ def main(cfg: DictConfig) -> None:
         lr=cfg.lr,
         device=device,
     )
-    logger.info("Evaluation micro-F1: {:.4f}".format(eval_result))
+    logger.info(
+        "Evaluation micro-F1: {:.4f}, macro_f1: {:.4f}.".format(micro_f1, macro_f1)
+    )
+
+    # save evaluation results to json
+    with open("./results.json", "w") as f:
+        json.dump({"micro_f1": micro_f1, "macro_f1": macro_f1}, f, indent=4)
 
 
 if __name__ == "__main__":

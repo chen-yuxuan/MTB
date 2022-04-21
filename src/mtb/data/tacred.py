@@ -77,13 +77,11 @@ class TACREDFewShotDataset(TACREDDataset):
     def __init__(
         self,
         data_file: str,
-        nway: int = 42,
         kshot: int = 5,
         entity_marker: bool = True,
         include_no_relation: bool = True,
     ):
         super().__init__(data_file, entity_marker)
-        self.nway = nway
         self.kshot = kshot
         self.include_no_relation = include_no_relation
 
@@ -127,11 +125,9 @@ class TACREDFewShotDataset(TACREDDataset):
         for class_name in ignored_classes:
             self.class_indices.pop(class_name, None)
 
-        # sample N-ways, given by a list of strings
-        sampled_classes = random.choices(list(self.class_indices.keys()), k=self.nway)
         # sample K-shots for each sampled class
         sampled_indices: List[int] = []
-        for sampled_class in sampled_classes:
+        for sampled_class in list(self.class_indices.keys()):
             sampled_indices += random.choices(
                 self.class_indices[sampled_class], k=self.kshot
             )

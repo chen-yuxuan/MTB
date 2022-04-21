@@ -8,7 +8,7 @@ from .base import REDataset
 logger = getLogger(__name__)
 
 
-class SemEvalDataset(REDataset):
+class SmilerDataset(REDataset):
     """The SemEval dataset from the raw data file(s)."""
 
     def __init__(
@@ -37,7 +37,7 @@ class SemEvalDataset(REDataset):
             )
 
 
-class SemEvalFewShotDataset(SemEvalDataset):
+class SmilerFewShotDataset(SmilerDataset):
     """Few-shot version of the SemEval dataset.
 
     The size of this dataset is `N` * `K` if the sampled classes have >= K examples.

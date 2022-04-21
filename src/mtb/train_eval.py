@@ -77,13 +77,20 @@ def train_and_eval(
                 if label_name not in ["no_relation", "Other"]
             ]
 
-            eval_f1 = f1_score(
+            micro_f1 = f1_score(
                 labels_list,
                 preds_list,
                 labels=positive_labels,
                 average="micro",
             )
-            logger.info("Micro-F1 score of evaluation: {:.4f}.".format(eval_f1))
+            macro_f1 = f1_score(
+                labels_list,
+                preds_list,
+                labels=positive_labels,
+                average="macro",
+            )
+            logger.info("Micro-F1 score of evaluation: {:.4f}.".format(micro_f1))
+            logger.info("Macro-F1 score of evaluation: {:.4f}.".format(macro_f1))
 
             # save classification report
             cls_report = classification_report(
@@ -109,4 +116,4 @@ def train_and_eval(
         with open("preds", "wb") as fp:
             pickle.dump(preds_list, fp)
 
-    return eval_f1
+    return micro_f1, macro_f1
