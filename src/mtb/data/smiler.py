@@ -57,14 +57,7 @@ class SmilerFewShotDataset(SmilerDataset):
         self.class_indices = self._get_indices_per_class()
         self.num_examples = {k: len(v) for k, v in self.class_indices.items()}
         # print the relation names in descending order of number of examples
-        logger.info(
-            "Number of examples per class:",
-            dict(
-                sorted(
-                    self.num_examples.items(), key=lambda item: item[1], reverse=True
-                ),
-            ),
-        )
+        logger.info("Number of examples per class:", self.num_examples)
 
         self.sampled_indices = self._sample_indices()
         self.dataset = self.dataset.select(self.sampled_indices)
@@ -81,24 +74,18 @@ class SmilerFewShotDataset(SmilerDataset):
 
     def _sample_indices(self) -> List[int]:
         """Sample the indices in the dataset: For each of the `N` classes, sample `K` indices."""
-        # get a list of valid (i.e. with sufficient size and positive if specified) classes
-        ignored_classes = [] if self.include_no_relation else ["Other"]
-        for class_name, num_examples_per_class in self.num_examples.items():
-            if num_examples_per_class < self.kshot:
-                logger.info(
-                    "Ignore class {} with {} examples, smaller than K={}.".format(
-                        class_name, num_examples_per_class, self.kshot
-                    )
-                )
-                ignored_classes.append(class_name)
-        for class_name in ignored_classes:
-            self.class_indices.pop(class_name, None)
+        # get a list of valid classes
+        if not self.include_no_relation:
+            self.class_indices.pop("no_relation", None)        
 
-        # sample K-shots for each sampled class
+        # sample K-shots for each sampled class; take all if the data is not sufficient for this class
         sampled_indices: List[int] = []
         for sampled_class in list(self.class_indices.keys()):
-            sampled_indices += random.choices(
-                self.class_indices[sampled_class], k=self.kshot
+            sampled_indices.extend(
+                random.sample(
+                    self.class_indices[sampled_class],
+                    k=min(len(self.class_indices[sampled_class]), self.kshot),
+                )
             )
         return sampled_indices
 

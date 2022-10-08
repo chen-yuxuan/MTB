@@ -1,0 +1,15 @@
+seed: 1234
+cuda_device: 0
+
+train_file: "./data/tacred/train.json"
+eval_file: "./data/tacred/test.json"
+kshot: 8
+
+model: bert-large-uncased
+variant: d
+
+max_length: 512
+batch_size: 256
+lr: 1.e-4
+num_epochs: 5
+dropout: 0
